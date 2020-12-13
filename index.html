@@ -2,35 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sample Site</title>
+    <title>YaleScraper</title>
 </head>
 <body>
   <script>
-    const getResults = (docs) => {
-      const thumbs = docs.querySelectorAll('.yale_thumbnail')
-      thumbs.forEach(thumb => {
-        const a = thumb.querySelector('a').href
-        console.log(a)
-        fetch(`http://localhost:8080/getImageURL?link=${a}`)
-        .then(res => res.text())
-        .then(data => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(data, 'text/html');
-          const imgURL = htmlDoc.getElementById('mainImageEnlarge').href
-          window.location = imgURL;
-        })
-      })
+    const callAPI = async (url) => {
+      const res = await fetch(url)
+      const data = await res.text()
+      const parser = new DOMParser()
+      const htmlDoc = parser.parseFromString(data, 'text/html')
+      return htmlDoc
     }
 
-    // url should be formatted: index.hmtl?robert+giard+Taylor%20Mead
-    fetch(`http://localhost:8080/search?q=${window.location.search}`)
-      .then(res => res.text())
-      .then(data => {
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(data, 'text/html');
-        const docs = htmlDoc.getElementById('documents');
-        getResults(docs)
-      })
+    const loadImage = async (a) => {
+      htmlDoc = await callAPI(`http://localhost:8080/findImageURL?link=${a}`)
+      const imgURL = htmlDoc.getElementById('mainImageEnlarge')
+      window.location = imgURL.href;
+    }
+
+    const listResults = (thumbs) => {
+      document.write("<div>Multiple results found</div>")
+      const list = []
+      thumbs.forEach(thumb => list.push(thumb.querySelector('a')))
+      document.write(list)
+    }
+
+    const search = async () => {
+      const params = window.location.search
+      const htmlDoc = await callAPI(`http://localhost:8080/search?${params}`)
+      const docs = htmlDoc.getElementById('documents');
+      const thumbs = docs.querySelectorAll('.yale_thumbnail')
+      if(!thumbs) return "no results"
+
+      thumbs.length === 1
+        ? loadImage(thumbs[0].querySelector('a').href)
+        : listResults(thumbs)
+    }
+
+    search();
   </script>
 
 </body>
