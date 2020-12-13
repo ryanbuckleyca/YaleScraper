@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sample Site</title>
+</head>
+<body>
+  <script>
+    const getResults = (docs) => {
+      const thumbs = docs.querySelectorAll('.yale_thumbnail')
+      thumbs.forEach(thumb => {
+        const a = thumb.querySelector('a').href
+        console.log(a)
+        fetch(`http://localhost:8080/getImageURL?link=${a}`)
+        .then(res => res.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(data, 'text/html');
+          const imgURL = htmlDoc.getElementById('mainImageEnlarge').href
+          window.location = imgURL;
+        })
+      })
+    }
+
+    const query = 'robert+giard+Taylor%20Mead'
+    fetch(`http://localhost:8080/search?q=${query}`)
+      .then(res => res.text())
+      .then(data => {
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, 'text/html');
+        const docs = htmlDoc.getElementById('documents');
+        getResults(docs)
+      })
+  </script>
+
+</body>
+</html>
