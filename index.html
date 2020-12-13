@@ -22,8 +22,8 @@
       })
     }
 
-    const query = 'robert+giard+Taylor%20Mead'
-    fetch(`http://localhost:8080/search?q=${query}`)
+    // url should be formatted: index.hmtl?robert+giard+Taylor%20Mead
+    fetch(`http://localhost:8080/search?q=${window.location.search}`)
       .then(res => res.text())
       .then(data => {
         const parser = new DOMParser();
