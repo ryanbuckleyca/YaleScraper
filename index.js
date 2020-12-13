@@ -25,7 +25,7 @@ app.get('/search', (req, res) => {
     .catch(error => res.send(error))
 })
 
-app.get('/', (req, res) => {
+app.get('/?*', (req, res) => {
   return res.sendFile(path.join(__dirname + '/index.html'))
 })
 
