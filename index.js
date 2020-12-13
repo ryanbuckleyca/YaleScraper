@@ -26,7 +26,8 @@ app.get('/search', (req, res) => {
 })
 
 app.get('/?*', (req, res) => {
-  return res.sendFile(path.join(__dirname + '/index.html'))
+  console.log('/?* called')
+  return res.sendFile(path.join(__dirname + `/index.html?${req.query.q}`))
 })
 
 app.listen(port);
