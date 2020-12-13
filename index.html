@@ -15,21 +15,29 @@
     }
 
     const loadImage = async (a) => {
-      htmlDoc = await callAPI(`http://localhost:8080/findImageURL?link=${a}`)
+      htmlDoc = await callAPI(`./getImageURL?link=${a}`)
       const imgURL = htmlDoc.getElementById('mainImageEnlarge')
       window.location = imgURL.href;
     }
 
     const listResults = (thumbs) => {
-      document.write("<div>Multiple results found</div>")
-      const list = []
-      thumbs.forEach(thumb => list.push(thumb.querySelector('a')))
-      document.write(list)
+      const div = document.createElement("div")
+      thumbs.forEach(thumb => {
+        const imgLink = thumb.querySelector('a')
+        const uri = imgLink.href
+        imgLink.removeAttribute('target')
+        imgLink.children[0].addEventListener('click', () => loadImage(uri))
+        imgLink.children[0].removeAttribute('height')
+        imgLink.children[0].width = '250'
+        imgLink.href="#"
+        div.appendChild(imgLink)
+      })
+      document.body.insertAdjacentElement('beforeend', div)
     }
 
     const search = async () => {
       const params = window.location.search
-      const htmlDoc = await callAPI(`http://localhost:8080/search?${params}`)
+      const htmlDoc = await callAPI(`./search${params}`)
       const docs = htmlDoc.getElementById('documents');
       const thumbs = docs.querySelectorAll('.yale_thumbnail')
       if(!thumbs) return "no results"
