@@ -21,8 +21,14 @@
     }
 
     const listResults = (thumbs) => {
+      if (thumbs.length < 1) {
+        const p = document.createElement("div")
+        document.body.insertAdjacentElement('beforeend', p)
+        p.insertAdjacentText('beforeend', "No Results on Yale for this Image")
+        return document.body.setAttribute("style", "background-color: red;")
+      }
       const div = document.createElement("div")
-      .setAttribute("style", "background-color: red;")
+      document.body.setAttribute("style", "background-color: orange;")
       thumbs.forEach(thumb => {
         const imgLink = thumb.querySelector('a')
         const uri = imgLink.href
